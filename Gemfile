@@ -1,10 +1,10 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.7.1'
+ruby '2.7.2'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.0.3', '>= 6.0.3.5'
+gem 'rails', '~> 6.0.3', '>= 6.0.3.4'
 # Use mysql as the database for Active Record
 gem 'mysql2', '>= 0.4.4'
 # Use Puma as the app server
@@ -14,23 +14,16 @@ gem 'puma', '~> 4.1'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
 # Use Active Model has_secure_password
-gem 'bcrypt', '~> 3.1.7'
-
-
-gem 'devise'
-gem 'devise_token_auth'
-
-gem 'active_model_serializers', '~> 0.10.12'
-
-gem 'carrierwave'
-
-gem 'acts-as-taggable-on', '~> 7.0'
-
-gem 'kaminari', '~> 1.2'
-
+# gem 'bcrypt', '~> 3.1.7'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
+gem 'devise'
+gem 'devise_token_auth'
+
+gem 'kaminari', '~> 1.2'
+
+gem 'active_model_serializers', '~> 0.10.12'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
