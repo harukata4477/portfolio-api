@@ -25,6 +25,12 @@ gem 'kaminari', '~> 1.2'
 
 gem 'active_model_serializers', '~> 0.10.12'
 
+gem 'carrierwave', '~> 2.1'
+
+gem 'acts-as-taggable-on', '~> 7.0'
+
+gem 'fast_jsonapi'
+
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
 

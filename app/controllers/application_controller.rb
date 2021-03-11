@@ -1,6 +1,5 @@
 class ApplicationController < ActionController::API
         include DeviseTokenAuth::Concerns::SetUserByToken
-        # skip_before_action :verify_authenticity_token, if: :devise_controller?
         skip_before_action :method_name, raise: false
 
         before_action :split_tokens
@@ -29,6 +28,37 @@ class ApplicationController < ActionController::API
             response.headers['X-Access-Token'] = CGI.escape(Base64.encode64(JSON.dump(auth_json)))
           end
 
-        # include ActionController::Cookies
-        # include UserAuth::Authenticator
+          def render_json(serializer, obj, options={})
+            if obj.class.name == 'ActiveRecord::Relation'
+              return render_collection(serializer, obj, options)
+            end
+        
+            render_record(serializer, obj, options)
+          end
+          
+          def render_collection(serializer, collection, options={})
+            options = meta_pagination(collection, options)
+            render_record(serializer, collection, options)
+          end
+        
+          def render_record(serializer, record, options={})
+            render json: serializer.new(record, options)
+          end
+        
+          def meta_pagination(paginated_obj, options={})
+            options[:meta] = {} unless options.has_key?(:meta)
+            meta_options = options[:meta].merge(generate_pagination(paginated_obj))
+            options[:meta] = meta_options
+            options
+          end
+        
+          def generate_pagination(paginated_obj)
+            {
+              pagination: {
+                current_page: paginated_obj.current_page,
+                total_pages: paginated_obj.total_pages
+              }
+            }
+          end
+
 end

@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_05_103634) do
+ActiveRecord::Schema.define(version: 2021_03_09_114733) do
+
+  create_table "follows", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "follower_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["follower_id"], name: "index_follows_on_follower_id"
+    t.index ["user_id", "follower_id"], name: "index_follows_on_user_id_and_follower_id", unique: true
+    t.index ["user_id"], name: "index_follows_on_user_id"
+  end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "provider", default: "email", null: false
@@ -29,8 +39,8 @@ ActiveRecord::Schema.define(version: 2021_03_05_103634) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
-    t.string "name"
-    t.string "nickname"
+    t.string "name", default: "User298"
+    t.text "profile"
     t.string "image"
     t.string "email"
     t.text "tokens"
@@ -42,4 +52,6 @@ ActiveRecord::Schema.define(version: 2021_03_05_103634) do
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
+  add_foreign_key "follows", "users"
+  add_foreign_key "follows", "users", column: "follower_id"
 end
