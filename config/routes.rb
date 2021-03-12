@@ -10,5 +10,6 @@ Rails.application.routes.draw do
         get '/search/:id', to: 'users#search'
       end
     end
+    resources :rooms 
   end
 end
