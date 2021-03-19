@@ -10,6 +10,11 @@ Rails.application.routes.draw do
         get '/search/:id', to: 'users#search'
       end
     end
-    resources :rooms 
+    resources :rooms do
+      collection do
+        get '/search/:id', to: 'rooms#search'
+      end
+    end
+    resources :contents 
   end
 end

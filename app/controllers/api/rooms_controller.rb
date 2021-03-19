@@ -1,52 +1,48 @@
 class Api::RoomsController < ApplicationController
-  # def index
-  #   @user = Room.where(user_id: current_user.id)
-  #   @rooms = @user.all.order(updated_at: :desc)
-  #   render json: @rooms
-  # end
+  def index
+    rooms = current_user.rooms.page(params[:page]).per(10).order(created_at: :desc)
+    pagination = generate_pagination(rooms)
+    json_string = RoomSerializer.new(rooms).serializable_hash.merge(pagination)
+    render json: json_string
+  end
 
-  # def show
-  #   @user = Room.where(user_id: current_user.id)
-  #   @room = @user.find_by(id: params[:id])
-
-  #   unless @room.nil?
-  #     render "show", formats: :json, handlers: "jbuilder"
-  #   else
-  #     render json: { error_message: 'Not Found'}
-  #   end
-  # end
+  def show
+    room = current_user.rooms.find_by(id: params[:id])
+    json_string = RoomSerializer.new(room).serialized_json
+    render json: json_string
+  end
 
   def create
     room = Room.new(room_params)
     if room.save
-      render json: { success_message: '登録完了'}
+      render json: { room_id: room.id}
     else
       render json: room.errors.messages
     end
   end
 
-  # def update
-  #   @user = Room.where(user_id: current_user.id)
-  #   room = @user.find(params[:id])
-  #   if room.update(room_params)
-  #     render json: { success_message: '更新完了'}
-  #   else
-  #     render json: room.errors.messages
-  #   end
-  # end
+  def update
+    room = current_user.rooms.find(params[:id])
+    if room.update(room_params)
+      render json: { success_message: '更新完了'}
+    else
+      render json: room.errors.messages
+    end
+  end
 
-  # def destroy
-  #   @user = Room.where(user_id: current_user.id)
-  #   room = @user.find(params[:id])
-  #   room.destroy
-  #   render json: { success_message: '削除完了'}
-  # end
+  def destroy
+    room = current_user.rooms.find(params[:id])
+    room.destroy
+    render json: { success_message: '削除完了'}
+  end
 
-  # def search 
-  #   @user = Room.where(user_id: current_user.id)
-  #   @room = Room.where("goal LIKE(?)", "%#{params[:id]}%")
-  #   render "search", formats: :json, handlers: "jbuilder"
-  # end
+  def search 
+    # User.find(1)
+    rooms = User.find(1).rooms.where("title LIKE(?)", "%#{params[:id]}%").page(params[:page]).per(10).order(created_at: :desc)
+    pagination = generate_pagination(rooms)
+    json_string = RoomSerializer.new(rooms).serializable_hash.merge(pagination)
+    render json: json_string
+  end
 
   private
 
