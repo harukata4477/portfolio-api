@@ -15,9 +15,6 @@ Rails.application.routes.draw do
         get '/search/:id', to: 'rooms#search'
       end
     end
-<<<<<<< HEAD
     resources :contents 
-=======
->>>>>>> d2a8736f38280a784d3e1920ab575be52bf68cef
   end
 end
