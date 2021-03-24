@@ -1,6 +1,6 @@
 class Api::ContentsController < ApplicationController
   def show
-    content = Content.find_by(room_id: params[:id])
+    content = Content.eager_load(:room).find_by(room_id: params[:id])
     json_string = ContentSerializer.new(content).serialized_json
     render json: json_string
   end

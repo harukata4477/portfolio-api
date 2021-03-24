@@ -1,4 +1,5 @@
 class Post < ApplicationRecord
+  acts_as_taggable
   has_many :post_contents
   # validates :room_id, uniqueness: true
   validates :room_id, presence: true

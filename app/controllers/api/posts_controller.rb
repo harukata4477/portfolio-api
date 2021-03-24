@@ -1,20 +1,21 @@
 class Api::PostsController < ApplicationController
   def index
-    posts = Post.includes(:user)
+    posts = Post.eager_load(:user, :tags).page(params[:page]).per(10).order(created_at: :desc)
+    pagination = generate_pagination(posts)
     judges = true
-    json_string = PostSerializer.new(posts,{params: {judge: judges}}).serialized_json
+    json_string = PostSerializer.new(posts,{params: {judge: judges}}).serializable_hash.merge(pagination)
     render json: json_string
   end
 
   def show
-    post = Post.find(params[:id])
+    post = Post.eager_load(:user, :room, :content).find(params[:id])
     json_string = PostSerializer.new(post).serialized_json
     render json: json_string
   end
 
   def create
     room_id = Room.find_by(title: params[:room]).id
-    post = Post.new(title: params[:title], room_id: room_id)
+    post = Post.new(title: params[:title], room_id: room_id, tag_list: params[:tag_list], kind: params[:kind])
     if post.save
       render json: {post_id: post.id}
     else
@@ -38,9 +39,11 @@ class Api::PostsController < ApplicationController
   end
 
   def search
-    posts = Post.includes(:user).where("title LIKE(?)", "%#{params[:id]}%").page(params[:page]).per(10).order(created_at: :DESC)
+    posts = Post.includes(:user, :tags).where("title LIKE(?)", "%#{params[:id]}%").page(params[:page]).per(10).order(created_at: :DESC)
+
     judges = true
-    json_string = PostSerializer.new(posts, {params: {judge: judges}}).serialized_json
+    pagination = generate_pagination(posts)
+    json_string = PostSerializer.new(posts, {params: {judge: judges}}).serializable_hash.merge(pagination)
     render json: json_string
   end
 end

@@ -1,6 +1,6 @@
 class PostSerializer
   include FastJsonapi::ObjectSerializer
-  attributes :id, :title, :room_id, :updated_at
+  attributes :id, :title, :room_id, :updated_at, :kind
 
   attributes :contents do |object, params|
     if params[:judge]
@@ -28,6 +28,10 @@ class PostSerializer
       name: object.user.name,
       image: object.user.image,
     }
+  end
+
+  attributes :tag_list do |object|
+    object.tags.pluck(:name)
   end
 
   attributes :post_contents do |object, params|

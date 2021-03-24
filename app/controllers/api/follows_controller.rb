@@ -3,8 +3,7 @@ class Api::FollowsController < ApplicationController
     user = User.find(params[:id])
     following = user.followings.page(params[:page]).page(params[:page]).per(10).order(created_at: :DESC)
     pagination = generate_pagination(following)
-    current_users = current_user
-    json_string = FollowSerializer.new(user, {params: {followings: following, current_user: current_users}}).serializable_hash.merge(pagination)
+    json_string = FollowSerializer.new(user, {params: {followings: following}}).serializable_hash.merge(pagination)
     render json: json_string
   end
 

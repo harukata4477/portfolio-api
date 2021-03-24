@@ -37,8 +37,7 @@ class Api::RoomsController < ApplicationController
   end
 
   def search 
-    user = User.find(1)
-    rooms = user.rooms.where("title LIKE(?)", "%#{params[:id]}%").page(params[:page]).per(10).order(created_at: :desc)
+    rooms = current_user.rooms.where("title LIKE(?)", "%#{params[:id]}%").page(params[:page]).per(10).order(created_at: :desc)
     pagination = generate_pagination(rooms)
     json_string = RoomSerializer.new(rooms).serializable_hash.merge(pagination)
     render json: json_string

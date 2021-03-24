@@ -23,18 +23,21 @@ class Api::UsersController < ApplicationController
   end
 
   def update
-    @user = User.find(params[:id])
-    if @user.update(user_params)
-      render json: @user
+    user = User.find(params[:id])
+    if current_user == user
+      user.update(user_params)
+      render json: user
     else
       render json: { errors: ['更新できませんでした。']}, status: 401
     end
   end
 
   def destroy
-    @user = User.find(params[:id])
-    @user.destroy
-    render json: { success_message: "削除が完了しました。"}
+    user = User.find(params[:id])
+    if current_user == user
+      user.destroy
+      render json: { success_message: "削除が完了しました。"}
+    end
   end
 
   private

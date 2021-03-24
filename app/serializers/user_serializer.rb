@@ -14,10 +14,6 @@ class UserSerializer
     judge.present?
   end
 
-  attributes :current_user do |object, params|
-    params[:current_user]
-  end
-
   attributes :email do |object, params|
     if params[:current_user].id == object.id
       object.email

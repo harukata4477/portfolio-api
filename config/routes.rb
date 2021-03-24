@@ -23,5 +23,6 @@ Rails.application.routes.draw do
       end
     end
     resources :post_contents
+    resources :tags
   end
 end
