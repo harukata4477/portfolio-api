@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_13_095026) do
+ActiveRecord::Schema.define(version: 2021_03_19_044701) do
 
   create_table "contents", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.text "content"
@@ -28,6 +28,33 @@ ActiveRecord::Schema.define(version: 2021_03_13_095026) do
     t.index ["follower_id"], name: "index_follows_on_follower_id"
     t.index ["user_id", "follower_id"], name: "index_follows_on_user_id_and_follower_id", unique: true
     t.index ["user_id"], name: "index_follows_on_user_id"
+  end
+
+  create_table "post_contents", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "post_id", null: false
+    t.string "kind"
+    t.string "title"
+    t.string "sub_title"
+    t.string "picture"
+    t.text "text"
+    t.integer "order_num", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["post_id"], name: "index_post_contents_on_post_id"
+  end
+
+  create_table "post_relationships", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "posts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "title", null: false
+    t.bigint "room_id", null: false
+    t.boolean "judge", default: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["room_id"], name: "index_posts_on_room_id"
   end
 
   create_table "rooms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -57,7 +84,7 @@ ActiveRecord::Schema.define(version: 2021_03_13_095026) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
-    t.string "name", default: "User713"
+    t.string "name", default: "User776"
     t.text "profile"
     t.string "image"
     t.string "email"
@@ -73,5 +100,7 @@ ActiveRecord::Schema.define(version: 2021_03_13_095026) do
   add_foreign_key "contents", "rooms"
   add_foreign_key "follows", "users"
   add_foreign_key "follows", "users", column: "follower_id"
+  add_foreign_key "post_contents", "posts"
+  add_foreign_key "posts", "rooms"
   add_foreign_key "rooms", "users"
 end

@@ -44,6 +44,12 @@ class Api::RoomsController < ApplicationController
     render json: json_string
   end
 
+  def all
+    rooms = current_user.rooms
+    json_string = RoomSerializer.new(rooms).serialized_json
+    render json: json_string
+  end
+
   private
 
   def room_params

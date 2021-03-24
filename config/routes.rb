@@ -13,8 +13,15 @@ Rails.application.routes.draw do
     resources :rooms do
       collection do
         get '/search/:id', to: 'rooms#search'
+        get '/all/', to: 'rooms#all'
       end
     end
     resources :contents 
+    resources :posts do
+      collection do
+        get '/search/:id', to: 'posts#search'
+      end
+    end
+    resources :post_contents
   end
 end
