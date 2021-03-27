@@ -1,6 +1,13 @@
+require 'securerandom'
 class Api::HelloController < ApplicationController
-  before_action :authenticate_user!
+  # before_action :authenticate_user!
   def index
-    render json: "api is ok"
+    i = 3
+    a = []
+    while i > 1 do
+      a.push(i)
+      i = rand(10)
+    end
+    render json: {random: a}
   end
 end

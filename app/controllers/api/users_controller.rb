@@ -40,6 +40,15 @@ class Api::UsersController < ApplicationController
     end
   end
 
+  def user_post
+    user = User.eager_load(posts: :tags).find(params[:id])
+    post = user.posts.page(params[:page]).per(10).order(created_at: :DESC)
+    judges = true
+    pagination = generate_pagination(post)
+    json_string = UserSerializer.new(user, {params: {judge: judges, posts: post}}).serializable_hash.merge(pagination)
+    render json: json_string
+  end
+
   private
     def user_params
       params.permit(:email, :name, :profile, :image)

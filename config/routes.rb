@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     resources :users do
       collection do
         get '/search/:id', to: 'users#search'
+        get '/user_post/:id', to: 'users#user_post'
       end
     end
     resources :rooms do
@@ -20,9 +21,12 @@ Rails.application.routes.draw do
     resources :posts do
       collection do
         get '/search/:id', to: 'posts#search'
+        get '/post_user/:id', to: 'posts#post_user'
+        get '/post_like/:id', to: 'posts#post_like'
       end
     end
     resources :post_contents
     resources :tags
+    resources :likes
   end
 end

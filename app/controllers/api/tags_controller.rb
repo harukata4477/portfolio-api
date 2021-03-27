@@ -6,10 +6,11 @@ class Api::TagsController < ApplicationController
   end
 
   def show
-    posts = Post.eager_load(:user).tagged_with([params[:id]], any: true).page(params[:page]).per(10).order(created_at: :DESC)
+    posts = Post.includes(:user, :tags, :likes).tagged_with(params[:id], any: true).page(params[:page]).per(10).order(created_at: :DESC)
     pagination = generate_pagination(posts)
     judges = true
-    json_string = TagSerializer.new(posts,{params: {judge: judges}}).serializable_hash.merge(pagination)
+    my_user = current_user
+    json_string = TagSerializer.new(posts,{params: {judge: judges, current_user: my_user}}).serializable_hash.merge(pagination)
     render json: json_string
   end
 end

@@ -5,5 +5,8 @@ class Post < ApplicationRecord
   validates :room_id, presence: true
   belongs_to :room, optional: true
   has_one :content, through: :room, source: :content
-  has_one :user, through: :room, source: :user
+  # has_one :user, through: :room, source: :user
+  belongs_to :user
+  has_many :likes, dependent: :destroy
+  has_many :liked_users, through: :likes, source: :user
 end
