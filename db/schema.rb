@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_24_133907) do
+ActiveRecord::Schema.define(version: 2021_03_27_132804) do
 
   create_table "contents", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.text "content"
@@ -38,6 +38,16 @@ ActiveRecord::Schema.define(version: 2021_03_24_133907) do
     t.index ["post_id"], name: "index_likes_on_post_id"
     t.index ["user_id", "post_id"], name: "index_likes_on_user_id_and_post_id", unique: true
     t.index ["user_id"], name: "index_likes_on_user_id"
+  end
+
+  create_table "messages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "post_id", null: false
+    t.string "message", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["post_id"], name: "index_messages_on_post_id"
+    t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
   create_table "post_contents", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -116,7 +126,7 @@ ActiveRecord::Schema.define(version: 2021_03_24_133907) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
-    t.string "name", default: "User146"
+    t.string "name", default: "User758"
     t.text "profile"
     t.string "image"
     t.string "email"
@@ -134,6 +144,8 @@ ActiveRecord::Schema.define(version: 2021_03_24_133907) do
   add_foreign_key "follows", "users", column: "follower_id"
   add_foreign_key "likes", "posts"
   add_foreign_key "likes", "users"
+  add_foreign_key "messages", "posts"
+  add_foreign_key "messages", "users"
   add_foreign_key "post_contents", "posts"
   add_foreign_key "posts", "rooms"
   add_foreign_key "posts", "users"

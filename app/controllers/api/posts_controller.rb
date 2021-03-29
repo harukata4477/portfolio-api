@@ -9,8 +9,9 @@ class Api::PostsController < ApplicationController
   end
 
   def show
-    post = Post.eager_load(:user, :tags, :room, :content, :likes).find(params[:id])
-    json_string = PostSerializer.new(post).serialized_json
+    post = Post.eager_load(:user, :tags, :room, :content, :likes, :messages).find(params[:id])
+    my_user = current_user
+    json_string = PostSerializer.new(post,{params: {current_user: my_user}}).serialized_json
     render json: json_string
   end
 

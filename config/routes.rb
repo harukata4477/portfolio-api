@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  mount ActionCable.server => '/cable'
   resources :home, defaults: { format: :json }
   post 'auth_user' => 'authentication#authenticate_user'
   mount_devise_token_auth_for 'User', at: 'auth'
@@ -28,5 +29,6 @@ Rails.application.routes.draw do
     resources :post_contents
     resources :tags
     resources :likes
+    resources :messages
   end
 end

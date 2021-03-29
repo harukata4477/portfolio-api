@@ -1,7 +1,5 @@
 class Api::LikesController < ApplicationController
   def index
-    # posts = Post.preload(:likes).where(id: current_user.id)
-    # render json: posts
     posts = Post.page(params[:page]).per(10).order(created_at: :desc)
     pagination = generate_pagination(posts)
     judges = true

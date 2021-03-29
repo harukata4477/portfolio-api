@@ -53,5 +53,9 @@ class PostSerializer
     unless params[:judge]
       object.post_contents.order("order_num")
     end
+  end 
+
+  attributes :messages do |object|
+    object.messages
   end
 end
