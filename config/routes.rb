@@ -30,5 +30,6 @@ Rails.application.routes.draw do
     resources :tags
     resources :likes
     resources :messages
+    resources :calendars
   end
 end

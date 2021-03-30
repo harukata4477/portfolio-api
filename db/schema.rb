@@ -10,7 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_27_132804) do
+ActiveRecord::Schema.define(version: 2021_03_29_105718) do
+
+  create_table "calendars", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "name"
+    t.string "color"
+    t.datetime "start", default: -> { "CURRENT_TIMESTAMP" }
+    t.datetime "end", default: -> { "CURRENT_TIMESTAMP" }
+    t.boolean "done", default: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_calendars_on_user_id"
+  end
 
   create_table "contents", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.text "content"
@@ -139,6 +151,7 @@ ActiveRecord::Schema.define(version: 2021_03_27_132804) do
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
+  add_foreign_key "calendars", "users"
   add_foreign_key "contents", "rooms"
   add_foreign_key "follows", "users"
   add_foreign_key "follows", "users", column: "follower_id"

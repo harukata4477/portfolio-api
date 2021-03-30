@@ -15,6 +15,7 @@ class User < ActiveRecord::Base
   has_many :rooms
   has_many :posts
   has_many :messages
+  has_many :calendars
   has_many :likes, dependent: :destroy
   has_many :liked_posts, through: :likes, source: :post 
 end
