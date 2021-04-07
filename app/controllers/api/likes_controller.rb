@@ -9,7 +9,7 @@ class Api::LikesController < ApplicationController
   end
 
   def show
-    likes = Like.eager_load(post: :tags, post: :likes).where(user_id: params[:id]).page(params[:page]).per(10).order(created_at: :desc)
+    likes = Like.preload(post: :tags, post: :likes).where(user_id: params[:id]).page(params[:page]).per(10).order(created_at: :desc)
     pagination = generate_pagination(likes)
     json_string = LikeSerializer.new(likes, {params: {my_user: current_user}}).serializable_hash.merge(pagination)
     render json: json_string
@@ -17,6 +17,14 @@ class Api::LikesController < ApplicationController
 
   def create
     like = current_user.likes.find_or_create_by!(post_id: params[:post_id])
+    check = Notification.find_by(post_id: params[:post_id], action: 'like', visitor_id: current_user.id, visited_id: params[:user_id])
+    unless check
+      notification = Notification.new(post_id: params[:post_id], action: 'like', visitor_id: current_user.id, visited_id: params[:user_id], checked: false)
+      if notification.visitor_id == notification.visited_id
+        notification.checked = true
+      end
+      notification.save
+    end
     render json: like
   end
 

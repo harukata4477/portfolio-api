@@ -9,4 +9,8 @@ class MessageSerializer
       image: object.user.image
     }
   end
+
+  attributes :posts do |object, params|
+    params[:posts]
+  end
 end

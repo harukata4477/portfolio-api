@@ -1,6 +1,6 @@
 class Post < ApplicationRecord
   acts_as_taggable
-  has_many :post_contents
+  has_many :post_contents, dependent: :destroy
   # validates :room_id, uniqueness: true
   validates :room_id, presence: true
   belongs_to :room, optional: true
@@ -10,4 +10,5 @@ class Post < ApplicationRecord
   has_many :likes, dependent: :destroy
   has_many :liked_users, through: :likes, source: :user
   has_many :messages, dependent: :destroy
+  has_many :notifications, dependent: :destroy
 end

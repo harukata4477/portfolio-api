@@ -23,5 +23,13 @@ class UserSerializer
     end
   end
 
+  attributes :following do |object, params|
+    object.follows.length
+  end
+
+  attributes :follower do |object, params|
+    object.followers.length
+  end
+
 end
 

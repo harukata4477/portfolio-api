@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_29_105718) do
+ActiveRecord::Schema.define(version: 2021_04_01_081740) do
 
   create_table "calendars", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -60,6 +60,23 @@ ActiveRecord::Schema.define(version: 2021_03_29_105718) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["post_id"], name: "index_messages_on_post_id"
     t.index ["user_id"], name: "index_messages_on_user_id"
+  end
+
+  create_table "notifications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "visitor_id"
+    t.bigint "visited_id"
+    t.bigint "post_id"
+    t.bigint "message_id"
+    t.bigint "follow_id"
+    t.string "action", default: "", null: false
+    t.boolean "checked", default: false, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["follow_id"], name: "index_notifications_on_follow_id"
+    t.index ["message_id"], name: "index_notifications_on_message_id"
+    t.index ["post_id"], name: "index_notifications_on_post_id"
+    t.index ["visited_id"], name: "index_notifications_on_visited_id"
+    t.index ["visitor_id"], name: "index_notifications_on_visitor_id"
   end
 
   create_table "post_contents", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -138,7 +155,7 @@ ActiveRecord::Schema.define(version: 2021_03_29_105718) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string "unconfirmed_email"
-    t.string "name", default: "User758"
+    t.string "name", default: "User300"
     t.text "profile"
     t.string "image"
     t.string "email"
@@ -159,6 +176,11 @@ ActiveRecord::Schema.define(version: 2021_03_29_105718) do
   add_foreign_key "likes", "users"
   add_foreign_key "messages", "posts"
   add_foreign_key "messages", "users"
+  add_foreign_key "notifications", "follows"
+  add_foreign_key "notifications", "messages"
+  add_foreign_key "notifications", "posts"
+  add_foreign_key "notifications", "users", column: "visited_id"
+  add_foreign_key "notifications", "users", column: "visitor_id"
   add_foreign_key "post_contents", "posts"
   add_foreign_key "posts", "rooms"
   add_foreign_key "posts", "users"

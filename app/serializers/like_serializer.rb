@@ -18,8 +18,10 @@ class LikeSerializer
     if params[:my_user]
       judge = []
       id = params[:my_user].id
-      if object.user_id == id
-        judge.push(true)
+      object.post.likes.map do |l|
+        if l.user_id == id
+          judge.push(true)
+        end
       end
       judge.present?
     end

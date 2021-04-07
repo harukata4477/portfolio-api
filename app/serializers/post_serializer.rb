@@ -55,7 +55,9 @@ class PostSerializer
     end
   end 
 
-  attributes :messages do |object|
-    object.messages
+  attributes :messages do |object, params|
+    unless params[:judge]
+      object.messages
+    end 
   end
 end

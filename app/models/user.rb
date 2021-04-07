@@ -18,4 +18,7 @@ class User < ActiveRecord::Base
   has_many :calendars
   has_many :likes, dependent: :destroy
   has_many :liked_posts, through: :likes, source: :post 
+  has_many :notifications, dependent: :destroy
+  has_many :active_notifications, class_name: 'Notification', foreign_key: 'visitor_id', dependent: :destroy
+  has_many :passive_notifications, class_name: 'Notification', foreign_key: 'visited_id', dependent: :destroy
 end

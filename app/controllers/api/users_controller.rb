@@ -8,7 +8,7 @@ class Api::UsersController < ApplicationController
   end
   
   def show
-    user = User.find(params[:id])
+    user = User.preload(:follows, :followers).find(params[:id])
     current_users = current_user
     json_string = UserSerializer.new(user, {params: {current_user: current_users}}).serialized_json
     render json: json_string

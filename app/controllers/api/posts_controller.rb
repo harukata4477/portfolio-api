@@ -36,12 +36,12 @@ class Api::PostsController < ApplicationController
 
   def destroy
     post = Post.find_by(id: params[:id])
-    post.destoy
+    post.destroy
       render json: { success_message: '削除完了'}
   end
 
   def post_user
-    posts = Post.eager_load(:user, :likes, :tags).where(user_id: params[:id]).page(params[:page]).per(10).order(created_at: :DESC)
+    posts = Post.eager_load(:user, :tags, :likes, :messages).where(user_id: params[:id]).page(params[:page]).per(10).order(created_at: :DESC)
     judges = true
     my_user = current_user
     pagination = generate_pagination(posts)
@@ -49,19 +49,48 @@ class Api::PostsController < ApplicationController
     render json: json_string
   end
 
-  def post_like
-    like = Like.eager_load(post: :tags).where(user_id: params[:id])
-    post = []
-    like.each do |l|
-      post.push(l.post)
+  def post_popular
+    likes = Like.all
+    if likes
+      like_ids = []
+      like_counts = 0
+      post_select = []
+      posts = []
+
+      likes.each do |like|
+        like_ids.push(like.post_id)
+      end
+      
+      like_ids = like_ids.uniq
+      
+      like_ids.each do |like_id|
+        likes.each do |like|
+          if like_id == like.post_id
+            like_counts += 1
+          end
+        end
+        post_select.push({id: like_id, like_counts: like_counts})
+        like_counts = 0
+      end
+
+      post_select = post_select.sort do |a, b|
+        b[:like_counts] <=> a[:like_counts]
+      end
+
+      posts = Post.preload(:user, :tags, :likes).where(id: post_select.pluck(:id)).order("field(id, #{post_select.pluck(:id).join(',')})").page(params[:page]).per(10)
+      pagination = generate_pagination(posts)
+      judges = true
+      my_user = current_user
+      json_string = PostSerializer.new(posts, {params: {judge: judges, current_user: my_user}}).serializable_hash.merge(pagination)
+      render json: json_string
+    else
+      posts = Post.preload(:user, :tags, :likes).all.page(params[:page]).per(10)
+      pagination = generate_pagination(posts)
+      judges = true
+      my_user = current_user
+      json_string = PostSerializer.new(posts, {params: {judge: judges, current_user: my_user}}).serializable_hash.merge(pagination)
+      render json: json_string
     end
-    # posts = like.post.eager_load(:user, :likes, :tags).where(user_id: params[:id]).page(params[:page]).per(10).order(created_at: :DESC)
-    # judges = true
-    # my_user = current_user
-    # pagination = generate_pagination(posts)
-    # json_string = PostSerializer.new(posts, {params: {judge: judges, current_user: my_user}}).serializable_hash.merge(pagination)
-    # render json: json_string
-    render json: post
   end
 
   def search

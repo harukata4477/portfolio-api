@@ -5,8 +5,16 @@ class Api::CalendarsController < ApplicationController
     render json: json_string
   end
 
+  def show_month
+    calendars = Calendar.eager_load(:user).where(user_id: current_user.id)
+    calendar_year = calendars.where(start: params[:id].in_time_zone.all_year)
+    calendar_month = calendar_year.where(start: params[:id].in_time_zone.all_month)
+    json_string = CalendarSerializer.new(calendar_month).serialized_json
+    render json: json_string
+  end
+
   def show
-    user = Calendar.eager_load(:user).where(user_id: 1)
+    user = Calendar.eager_load(:user).where(user_id: current_user.id)
     calendar_year = user.where(start: params[:id].in_time_zone.all_year)
     calendar_month = calendar_year.where(start: params[:id].in_time_zone.all_month)
     calendar_day = calendar_month.where(start: params[:id].in_time_zone.all_day)
@@ -33,6 +41,9 @@ class Api::CalendarsController < ApplicationController
   end
 
   def destroy
+    calendar = Calendar.find_by(id: params[:id])
+    calendar.destroy
+    render json: { success_message: '削除完了'}
   end
 
   private

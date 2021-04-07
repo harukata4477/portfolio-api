@@ -49,6 +49,21 @@ class Api::RoomsController < ApplicationController
     render json: json_string
   end
 
+  def room_done
+    rooms = current_user.rooms.where(done: true).page(params[:page]).per(10).order(created_at: :desc)
+    room_count = current_user.rooms.count
+    pagination = generate_pagination(rooms)
+    json_string = RoomSerializer.new(rooms, {params:{room_counts: room_count}}).serializable_hash.merge(pagination)
+    render json: json_string
+  end
+
+  def room_not_yet
+    rooms = current_user.rooms.where(done: false).page(params[:page]).per(10).order(created_at: :desc)
+    pagination = generate_pagination(rooms)
+    json_string = RoomSerializer.new(rooms).serializable_hash.merge(pagination)
+    render json: json_string
+  end
+
   private
 
   def room_params
