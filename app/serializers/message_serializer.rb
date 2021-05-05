@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MessageSerializer
   include FastJsonapi::ObjectSerializer
   attributes :message, :created_at
@@ -10,7 +12,7 @@ class MessageSerializer
     }
   end
 
-  attributes :posts do |object, params|
-    params[:posts]
+  attributes :posts do |_object, params|
+    params[:post]
   end
 end

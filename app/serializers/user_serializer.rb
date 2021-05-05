@@ -1,35 +1,28 @@
+# frozen_string_literal: true
+
 class UserSerializer
   include FastJsonapi::ObjectSerializer
   attributes :id, :name, :image, :profile
-  
+
   attributes :follow_judge do |object, params|
     if params[:current_user]
       judge = []
-      id = object.id
       params[:current_user].follows.map do |f|
-        if object.id == f.follower_id
-          judge.push(true)
-        end
+        judge.push(true) if object.id == f.follower_id
       end
       judge.present?
     end
   end
 
   attributes :email do |object, params|
-    if params[:current_user]
-      if params[:current_user].id == object.id
-        object.email
-      end
-    end
+    object.email if params[:current_user] && (params[:current_user].id == object.id)
   end
 
-  attributes :following do |object, params|
+  attributes :following do |object, _params|
     object.follows.length
   end
 
-  attributes :follower do |object, params|
+  attributes :follower do |object, _params|
     object.followers.length
   end
-
 end
-

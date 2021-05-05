@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
   mount ActionCable.server => '/cable'
-  resources :home, defaults: { format: :json }
+  resources :home
   post 'auth_user' => 'authentication#authenticate_user'
   mount_devise_token_auth_for 'User', at: 'auth'
-  namespace :api, defaults: { format: :json } do
-    resources :hello, only:[:index]
-    resources :follows, only:[:show ,:create, :destroy] do 
+  namespace :api do
+    resources :hello, only: [:index]
+    resources :follows, only: %i[show create destroy] do
       collection do
         get '/show_follower/:id', to: 'follows#show_follower'
       end
@@ -24,7 +26,7 @@ Rails.application.routes.draw do
         get '/room_not_yet/', to: 'rooms#room_not_yet'
       end
     end
-    resources :contents 
+    resources :contents
     resources :posts do
       collection do
         get '/search/:id', to: 'posts#search'
@@ -36,12 +38,12 @@ Rails.application.routes.draw do
     resources :tags
     resources :likes
     resources :messages
-    resources :calendars do 
+    resources :calendars do
       collection do
         get '/show_month/:id', to: 'calendars#show_month'
       end
     end
-    resources :notifications do 
+    resources :notifications do
       collection do
         patch '/all_update/', to: 'notifications#all_update'
       end

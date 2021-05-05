@@ -1,8 +1,8 @@
+# frozen_string_literal: true
+
 class ContentSerializer
   include FastJsonapi::ObjectSerializer
   attributes :id, :content
 
-  attributes :room do |object|
-    object.room
-  end
+  attributes :room, &:room
 end

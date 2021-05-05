@@ -1,4 +1,9 @@
+# frozen_string_literal: true
+
 class PostContent < ApplicationRecord
-  belongs_to :post, optional: true
   mount_uploader :picture, PictureUploader
+  validates :post_id, presence: true
+  validates :kind, presence: true
+
+  belongs_to :post, optional: true
 end

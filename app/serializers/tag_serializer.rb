@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TagSerializer
   include FastJsonapi::ObjectSerializer
   attributes :tags do |object, params|
@@ -5,7 +7,7 @@ class TagSerializer
       {
         id: object.id,
         name: object.name,
-        taggings_count: object.taggings_count,
+        taggings_count: object.taggings_count
       }
     end
   end
@@ -16,35 +18,27 @@ class TagSerializer
         id: object.id,
         title: object.title,
         kind: object.kind,
-        tag_list: object.tag_list,
+        tag_list: object.tag_list
       }
     end
   end
 
   attributes :likes do |object, params|
-    if params[:judge]
-      object.likes
-    end
+    object.likes if params[:judge]
   end
 
   attributes :like_judges do |object, params|
-    if params[:judge]
-      if params[:current_user]
-        judge = []
-        id = params[:current_user].id
-        object.likes.map do |like|
-          if like.user_id == id
-            judge.push(true)
-          end
-        end
-        judge.present?
+    if params[:judge] && (params[:current_user])
+      judge = []
+      id = params[:current_user].id
+      object.likes.map do |like|
+        judge.push(true) if like.user_id == id
       end
+      judge.present?
     end
   end
 
   attributes :users do |object, params|
-    if params[:judge]
-      object.user
-    end
+    object.user if params[:judge]
   end
 end

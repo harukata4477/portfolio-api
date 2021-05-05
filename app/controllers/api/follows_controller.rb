@@ -1,40 +1,46 @@
-class Api::FollowsController < ApplicationController
-  def show
-    user = User.preload(:followings).find(params[:id])
-    following = user.followings.page(params[:page]).page(params[:page]).per(10).order(created_at: :DESC)
-    pagination = generate_pagination(following)
-    json_string = FollowSerializer.new(user, {params: {followings: following}}).serializable_hash.merge(pagination)
-    render json: json_string
-  end
+# frozen_string_literal: true
 
-  def show_follower
-    user = User.preload(:followers).find(params[:id])
-    judge = true
-    follower = user.followers.page(params[:page]).page(params[:page]).per(10).order(created_at: :DESC)
-    pagination = generate_pagination(follower)
-    json_string = FollowSerializer.new(user, {params: {judges: judge, followers: follower}}).serializable_hash.merge(pagination)
-    render json: json_string
-  end
-
-  def create
-    follower = User.find(params[:user_id])
-    unless current_user == follower
-      current_user.follows.find_or_create_by(follower_id: follower.id)
+module Api
+  class FollowsController < ApplicationController
+    before_action :authenticate_user!, only: %i[create destroy]
+    def show
+      user = User.preload(:followings).find(params[:id])
+      set_followings = user.followings.page(params[:page]).page(params[:page]).per(10).order(created_at: :DESC)
+      pagination = generate_pagination(set_followings)
+      data = FollowSerializer.new(user,
+                                  { params: { followings: set_followings } }).serializable_hash.merge(pagination)
+      render json: data
     end
 
-    check = Notification.find_by(action: 'follow', visitor_id: current_user.id, visited_id: params[:user_id])
-    unless check
-      notification = Notification.new(action: 'follow', visitor_id: current_user.id, visited_id: params[:user_id], checked: false)
-      if notification.visitor_id == notification.visited_id
-        notification.checked = true
+    def show_follower
+      user = User.preload(:followers).find(params[:id])
+      only_followers = true
+      set_followers = user.followers.page(params[:page]).page(params[:page]).per(10).order(created_at: :DESC)
+      pagination = generate_pagination(set_followers)
+      data = FollowSerializer.new(user,
+                                  { params: { judge: only_followers,
+                                              followers: set_followers } }).serializable_hash.merge(pagination)
+      render json: data
+    end
+
+    def create
+      follow = User.find(params[:user_id])
+      current_user.follows.find_or_create_by(follower_id: follow.id) unless current_user == follow
+
+      check = Notification.find_by(action: 'follow', visitor_id: current_user.id, visited_id: params[:user_id])
+      unless check
+        notification = Notification.new(action: 'follow', visitor_id: current_user.id, visited_id: params[:user_id],
+                                        checked: false)
+        notification.checked = true if notification.visitor_id == notification.visited_id
+        notification.save
       end
-      notification.save
     end
-  end
-  
-  def destroy
-    follower = User.find(params[:id])
-    relationship = current_user.follows.find_by(follower_id: follower.id)
-    relationship.destroy 
+
+    def destroy
+      follow = User.find(params[:id])
+      relationship = current_user.follows.find_by(follower_id: follow.id)
+      relationship.destroy
+      render json: { success_message: '削除完了' }
+    end
   end
 end

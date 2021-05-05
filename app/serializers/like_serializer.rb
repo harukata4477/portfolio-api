@@ -1,16 +1,16 @@
+# frozen_string_literal: true
+
 class LikeSerializer
   include FastJsonapi::ObjectSerializer
   attributes :id, :user_id, :post_id
 
-  attributes :posts do |object|
-    object.post
-  end
+  attributes :posts, &:post
 
   attributes :like_counts do |object|
     object.post.likes.length
   end
 
-  attributes :users do |object, params|
+  attributes :users do |object, _params|
     object.user
   end
 
@@ -19,12 +19,9 @@ class LikeSerializer
       judge = []
       id = params[:my_user].id
       object.post.likes.map do |l|
-        if l.user_id == id
-          judge.push(true)
-        end
+        judge.push(true) if l.user_id == id
       end
       judge.present?
     end
   end
-
 end
