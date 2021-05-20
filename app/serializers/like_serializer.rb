@@ -11,7 +11,7 @@ class LikeSerializer
   end
 
   attributes :users do |object, _params|
-    object.user
+    object.post.user
   end
 
   attributes :like_judges do |object, params|

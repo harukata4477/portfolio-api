@@ -38,8 +38,11 @@ module Api
 
     def destroy
       calendar = Calendar.find_by(id: params[:id])
-      calendar.destroy
-      render json: { success_message: '削除完了' }
+      if calendar.destroy
+        render json: { success_message: '削除完了' }
+      else
+        render json: { errors: ['削除できませんでした。'] }, status: 401
+      end
     end
 
     def show_month

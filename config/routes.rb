@@ -2,9 +2,9 @@
 
 Rails.application.routes.draw do
   mount ActionCable.server => '/cable'
-  resources :home
   post 'auth_user' => 'authentication#authenticate_user'
   mount_devise_token_auth_for 'User', at: 'auth'
+  root to: 'home#index'
   namespace :api do
     resources :hello, only: [:index]
     resources :follows, only: %i[show create destroy] do

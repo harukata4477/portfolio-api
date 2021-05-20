@@ -32,15 +32,22 @@ module Api
         notification = Notification.new(action: 'follow', visitor_id: current_user.id, visited_id: params[:user_id],
                                         checked: false)
         notification.checked = true if notification.visitor_id == notification.visited_id
-        notification.save
+        if notification.save
+          render json: '登録完了'
+        else
+          render json: { error_message: '新規登録失敗しました。' }
+        end
       end
     end
 
     def destroy
       follow = User.find(params[:id])
       relationship = current_user.follows.find_by(follower_id: follow.id)
-      relationship.destroy
-      render json: { success_message: '削除完了' }
+      if relationship.destroy
+        render json: { success_message: '削除完了' }
+      else
+        render json: { errors: ['削除できませんでした。'] }, status: 401
+      end
     end
   end
 end

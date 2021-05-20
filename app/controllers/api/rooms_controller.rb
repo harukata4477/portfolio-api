@@ -37,8 +37,11 @@ module Api
 
     def destroy
       room = current_user.rooms.find(params[:id])
-      room.destroy
-      render json: { success_message: '削除完了' }
+      if room.destroy
+        render json: { success_message: '削除完了' }
+      else
+        render json: { errors: ['削除できませんでした。'] }, status: 401
+      end
     end
 
     def search

@@ -43,8 +43,11 @@ module Api
 
     def destroy
       post = Post.find_by(id: params[:id])
-      post.destroy
-      render json: { success_message: '削除完了' }
+      if post.destroy
+        render json: { success_message: '削除完了' }
+      else
+        render json: { errors: ['削除できませんでした。'] }, status: 401
+      end
     end
 
     def post_user
@@ -85,7 +88,7 @@ module Api
         end
 
         posts = Post.preload(:user, :tags,
-                             :likes).where(id: post_select.pluck(:id)).order("field(id, #{post_select.pluck(:id).join(',')})").page(params[:page]).per(10)
+                             :likes).where(id: post_select.pluck(:id)).order(Arel.sql("field(id, #{post_select.pluck(:id).join(',')})")).page(params[:page]).per(10)
         pagination = generate_pagination(posts)
         limit = true
         my_user = current_user
