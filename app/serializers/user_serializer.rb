@@ -15,8 +15,10 @@ class UserSerializer
   end
 
   attributes :email do |object, params|
-    if params[:current_user].id == object.id
-      object.email
+    if params[:current_user]
+      if params[:current_user].id == object.id
+        object.email
+      end
     end
   end
 

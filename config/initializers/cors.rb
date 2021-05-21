@@ -9,7 +9,7 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins ['http://postmap.link', 'http://localhost:3000']
+    origins ['http://postmap.link', 'http://localhost:3000', 'http://52.194.175.96']
 
     resource '*',
              headers: :any,
