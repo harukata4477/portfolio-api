@@ -22,8 +22,7 @@ module Api
     end
 
     def create
-      room_id = Room.find_by(title: params[:room]).id
-      post = Post.new(title: params[:title], room_id: room_id, tag_list: params[:tag_list], kind: params[:kind],
+      post = Post.new(title: params[:title], room_id: params[:room], tag_list: params[:tag_list], kind: params[:kind],
                       user_id: current_user.id)
       if post.save
         render json: { post_id: post.id }
